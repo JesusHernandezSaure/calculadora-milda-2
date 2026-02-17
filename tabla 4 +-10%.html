@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Suplementación de Vitamina D</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        medical: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-slate-50 text-slate-700 min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="bg-medical-600 p-2 rounded-lg">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold text-slate-900 tracking-tight">Calculadora de Vitamina D</h1>
+                    <p class="text-xs text-slate-500 font-medium">Basado en Guías Grant 2025 (Evidence-Based)</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+            <!-- Input Section -->
+            <div class="lg:col-span-5 space-y-6">
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                    <h2 class="text-lg font-semibold text-slate-900 mb-4 flex items-center">
+                        <svg class="w-5 h-5 mr-2 text-medical-600" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                            </path>
+                        </svg>
+                        Datos del Paciente
+                    </h2>
+
+                    <form id="calcForm" class="space-y-5">
+                        <!-- Basic Info Group -->
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Sexo</label>
+                                <select id="sex"
+                                    class="w-full rounded-lg border-slate-300 focus:border-medical-500 focus:ring-medical-500 shadow-sm text-sm py-2">
+                                    <option value="male">Hombre</option>
+                                    <option value="female">Mujer</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Edad</label>
+                                <input type="number" id="age"
+                                    class="w-full rounded-lg border-slate-300 focus:border-medical-500 focus:ring-medical-500 shadow-sm text-sm py-2"
+                                    placeholder="Años">
+                            </div>
+                        </div>
+
+                        <!-- Anthropometry -->
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Peso (kg)</label>
+                                <input type="number" id="weight"
+                                    class="w-full rounded-lg border-slate-300 focus:border-medical-500 focus:ring-medical-500 shadow-sm text-sm py-2"
+                                    placeholder="Ej. 70">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Altura (cm)</label>
+                                <input type="number" id="height"
+                                    class="w-full rounded-lg border-slate-300 focus:border-medical-500 focus:ring-medical-500 shadow-sm text-sm py-2"
+                                    placeholder="Ej. 170">
+                            </div>
+                        </div>
+
+                        <!-- Clinical Data -->
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Nivel Actual 25(OH)D</label>
+                            <div class="relative rounded-md shadow-sm">
+                                <input type="number" id="currentLevel"
+                                    class="block w-full rounded-lg border-slate-300 focus:border-medical-500 focus:ring-medical-500 sm:text-sm py-2 pr-16"
+                                    placeholder="Ej. 15">
+                                <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                    <span class="text-slate-500 sm:text-sm">ng/mL</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Risk Factors -->
+                        <div class="bg-slate-50 rounded-lg p-4 border border-slate-100">
+                            <h3 class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Factores de
+                                Riesgo / Comorbilidades</h3>
+                            <div class="space-y-3">
+                                <label class="flex items-center space-x-3">
+                                    <input type="checkbox" id="pregnancy"
+                                        class="h-4 w-4 text-medical-600 focus:ring-medical-500 border-gray-300 rounded">
+                                    <span class="text-sm text-slate-700">Embarazo</span>
+                                </label>
+                                <label class="flex items-center space-x-3">
+                                    <input type="checkbox" id="diabetes"
+                                        class="h-4 w-4 text-medical-600 focus:ring-medical-500 border-gray-300 rounded">
+                                    <span class="text-sm text-slate-700">Diabetes</span>
+                                </label>
+                                <label class="flex items-center space-x-3">
+                                    <input type="checkbox" id="osteo_meno"
+                                        class="h-4 w-4 text-medical-600 focus:ring-medical-500 border-gray-300 rounded">
+                                    <span class="text-sm text-slate-700">Osteoporosis / Menopausia</span>
+                                </label>
+                                <label class="flex items-center space-x-3">
+                                    <input type="checkbox" id="anticonvulsants"
+                                        class="h-4 w-4 text-medical-600 focus:ring-medical-500 border-gray-300 rounded">
+                                    <span class="text-sm text-slate-700">Uso de Anticonvulsivantes</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="pt-2">
+                            <button type="button" onclick="calculate()"
+                                class="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-medical-600 hover:bg-medical-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-medical-500 transition-colors">
+                                Calcular Dosis
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div class="lg:col-span-7 space-y-6">
+
+                <!-- Welcome State -->
+                <div id="welcomeState"
+                    class="h-full flex flex-col items-center justify-center text-slate-400 p-12 border-2 border-dashed border-slate-200 rounded-2xl">
+                    <svg class="w-16 h-16 mb-4 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01">
+                        </path>
+                    </svg>
+                    <p class="text-sm">Introduce los datos del paciente para ver el esquema de suplementación.</p>
+                </div>
+
+                <!-- Toxicity Alert -->
+                <div id="toxicityAlert"
+                    class="hidden fade-in bg-red-50 border-l-4 border-red-500 p-4 rounded-r-lg shadow-sm">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <svg class="h-5 w-5 text-red-500" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd"
+                                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <div class="ml-3">
+                            <h3 class="text-sm font-bold text-red-800">¡ALERTA DE TOXICIDAD!</h3>
+                            <div class="mt-2 text-sm text-red-700">
+                                <p>El nivel ingresado (>100 ng/mL) indica toxicidad potencial por Vitamina D.</p>
+                                <ul class="list-disc list-inside mt-1">
+                                    <li>Suspender suplementación inmediatamente.</li>
+                                    <li>Evaluar calcemia y función renal.</li>
+                                    <li>Referir a urgencias si presenta síntomas de hipercalcemia.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Results Content -->
+                <div id="resultsContent" class="hidden fade-in space-y-6">
+
+                    <!-- Top Cards: BMI & Status -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- IMC Card -->
+                        <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+                            <div class="flex items-center justify-between mb-2">
+                                <h3 class="text-sm font-semibold text-slate-500 uppercase">IMC</h3>
+                                <span id="bmiBadge"
+                                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-800">
+                                    -
+                                </span>
+                            </div>
+                            <div class="flex items-baseline">
+                                <p id="bmiValue" class="text-3xl font-bold text-slate-900">-</p>
+                                <p class="ml-2 text-sm text-slate-500">kg/m²</p>
+                            </div>
+                        </div>
+
+                        <!-- Status Card -->
+                        <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+                            <div class="flex items-center justify-between mb-2">
+                                <h3 class="text-sm font-semibold text-slate-500 uppercase">Estado Actual</h3>
+                                <div id="statusIndicator" class="w-3 h-3 rounded-full bg-slate-200"></div>
+                            </div>
+                            <p id="statusValue" class="text-2xl font-bold text-slate-900">-</p>
+                            <p id="targetValue" class="text-xs text-slate-500 mt-1">Meta: >30 ng/mL</p>
+                        </div>
+                    </div>
+
+                    <!-- Recommendation Card -->
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                        <div class="bg-slate-50 px-6 py-4 border-b border-slate-200">
+                            <h3 class="text-lg font-bold text-slate-800">Esquema de Toma Sugerido</h3>
+                        </div>
+
+                        <div class="p-6 space-y-6">
+                            <!-- Loading Phase -->
+                            <div class="relative pl-8 border-l-2 border-medical-200 pb-2">
+                                <div
+                                    class="absolute -left-[9px] top-0 bg-white border-2 border-medical-500 rounded-full w-4 h-4">
+                                </div>
+                                <h4 class="text-sm font-bold text-medical-700 uppercase tracking-widest mb-2">Fase 1:
+                                    Carga (Repleción)</h4>
+                                <div class="bg-medical-50 rounded-lg p-4 border border-medical-100">
+                                    <div class="flex justify-between items-start">
+                                        <div>
+                                            <p class="text-xl font-bold text-medical-800" id="loadingDoseText">-</p>
+                                            <p class="text-xs text-medical-600 font-medium mt-1">Repetir semanalmente
+                                                durante 8 semanas.</p>
+                                        </div>
+                                    </div>
+                                    <p class="text-xs text-medical-500 mt-2 pt-2 border-t border-medical-200">Total
+                                        aprox. semana: <span id="loadingDoseVal">0 UI</span>. Máximo seguridad: 50,000
+                                        UI/sem.</p>
+                                </div>
+                            </div>
+
+                            <!-- Maintenance Phase -->
+                            <div class="relative pl-8 border-l-2 border-slate-200">
+                                <div
+                                    class="absolute -left-[9px] top-0 bg-white border-2 border-slate-400 rounded-full w-4 h-4">
+                                </div>
+                                <h4 class="text-sm font-bold text-slate-600 uppercase tracking-widest mb-2">Fase 2:
+                                    Mantenimiento</h4>
+                                <div class="bg-slate-50 rounded-lg p-4 border border-slate-100">
+                                    <div>
+                                        <p class="text-xl font-bold text-slate-800" id="maintenanceDoseText">-</p>
+                                        <p class="text-xs text-slate-600 font-medium mt-1">Dosis repartida mensualmente
+                                            (Total mes: <span id="monthlyTotalVal">- UI</span>)</p>
+                                    </div>
+                                    <p class="text-xs text-slate-500 mt-2 pt-2 border-t border-slate-200">Iniciar
+                                        inmediatamente después de terminar las 8 semanas de carga.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Clinical Notes -->
+                    <div id="clinicalNotes" class="bg-amber-50 rounded-xl p-5 border border-amber-100 hidden">
+                        <h4 class="text-sm font-bold text-amber-800 mb-2 flex items-center">
+                            <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            Notas Clínicas Relevantes
+                        </h4>
+                        <ul id="notesList" class="space-y-1 text-sm text-amber-900 list-disc list-inside">
+                            <!-- Dynamic notes -->
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <p class="text-center text-xs text-slate-500 leading-relaxed">
+                <strong>Aviso Legal:</strong> Este software es una herramienta informativa basada en protocolos de la
+                Endocrine Society y guías recientes basadas en evidencia (Grant 2025). No constituye una prescripción
+                médica. La suplementación debe ser supervisada por un profesional.
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        const CAP_HIGH = 25000;
+        const CAP_LOW = 5600;
+
+        function calculate() {
+            // Inputs
+            const sex = document.getElementById('sex').value;
+            const age = parseFloat(document.getElementById('age').value);
+            const weight = parseFloat(document.getElementById('weight').value);
+            const height = parseFloat(document.getElementById('height').value);
+            const currentLevel = parseFloat(document.getElementById('currentLevel').value);
+
+            // Risk Factors
+            const isPregnancy = document.getElementById('pregnancy').checked;
+            const isDiabetes = document.getElementById('diabetes').checked;
+            const isOsteoMeno = document.getElementById('osteo_meno').checked;
+            const isAnticonvulsants = document.getElementById('anticonvulsants').checked;
+
+            // UI Elements
+            const welcomeState = document.getElementById('welcomeState');
+            const toxicityAlert = document.getElementById('toxicityAlert');
+            const resultsContent = document.getElementById('resultsContent');
+
+            // Validation basics
+            if (!weight || !height || !currentLevel) {
+                alert('Por favor complete Peso, Altura y Nivel Actual.');
+                return;
+            }
+
+            // --- Logic ---
+
+            // 1. BMI Calculation
+            const heightM = height / 100;
+            const bmi = weight / (heightM * heightM);
+            const isObese = bmi > 30;
+
+            // 2. Logic: Toxicity Check
+            if (currentLevel > 100) {
+                welcomeState.classList.add('hidden');
+                resultsContent.classList.add('hidden');
+                toxicityAlert.classList.remove('hidden');
+                return;
+            } else {
+                toxicityAlert.classList.add('hidden');
+            }
+
+            // 3. Logic: Target Level & Diagnosis (Grant 2025)
+            // Target > 40 ng/mL for general, > 50 for high risk.
+            let target = 40;
+            if (isOsteoMeno || isDiabetes || isAnticonvulsants) target = 50;
+
+            let status = '';
+            let statusClass = '';
+            let indicatorClass = '';
+
+            if (currentLevel < 20) {
+                status = 'Deficiencia (<20 ng/mL)';
+                statusClass = 'text-red-700 bg-red-50 ring-red-600/20';
+                indicatorClass = 'bg-red-500';
+            } else if (currentLevel >= 20 && currentLevel < 30) {
+                status = 'Insuficiencia (20-30 ng/mL)';
+                statusClass = 'text-amber-700 bg-amber-50 ring-amber-600/20';
+                indicatorClass = 'bg-amber-500';
+            } else if (currentLevel >= 30 && currentLevel < 40) {
+                status = 'Suficiencia Relativa (30-40 ng/mL)';
+                statusClass = 'text-yellow-700 bg-yellow-50 ring-yellow-600/20';
+                indicatorClass = 'bg-yellow-500';
+            } else {
+                status = 'Óptimo (>40 ng/mL)';
+                statusClass = 'text-green-700 bg-green-50 ring-green-600/20';
+                indicatorClass = 'bg-green-500';
+            }
+
+            // 4. Logic: Loading Dose (Deficit)
+            let calculatedWeekly = 0;
+            let loadingRec = "No requerida (Nivel Óptimo)";
+            let actualWeeklyDose = 0;
+
+            if (currentLevel < target) {
+                const totalDeficit = (target - currentLevel) * weight * 140;
+                calculatedWeekly = totalDeficit / 8;
+
+                // Cap at 50k
+                if (calculatedWeekly > 50000) calculatedWeekly = 50000;
+
+                // CAPSULE LOGIC FOR LOADING
+                if (calculatedWeekly >= 37500) {
+                    loadingRec = "Tomar 2 cápsulas de 25,000 UI";
+                    actualWeeklyDose = 50000;
+                } else if (calculatedWeekly >= 15000) {
+                    loadingRec = "Tomar 1 cápsula de 25,000 UI";
+                    actualWeeklyDose = 25000;
+                } else {
+                    // Use 5.6k caps
+                    let caps = Math.round(calculatedWeekly / CAP_LOW);
+                    if (caps < 1) caps = 1;
+                    actualWeeklyDose = caps * CAP_LOW;
+
+                    if (actualWeeklyDose > 50000) {
+                        loadingRec = "Tomar 1 cápsula de 25,000 UI";
+                        actualWeeklyDose = 25000;
+                    } else {
+                        loadingRec = `Tomar ${caps} cápsula(s) de 5,600 UI`;
+                    }
+                }
+            }
+
+            // 5. Logic: Maintenance Dose (Grant 2025)
+            // Base: 4000 IU/day.
+            let baseMaintenance = 4000;
+
+            // Adjustments
+            if (isObese) baseMaintenance = 6000; // Increased for obesity
+            if (isAnticonvulsants) baseMaintenance += 1000;
+
+            const monthlyTarget = baseMaintenance * 30;
+
+            // CAPSULE LOGIC FOR MAINTENANCE (Adjusted with ±10% tolerance)
+            // Goal: Find valid combinations within ±10% of target.
+            // Prioritize: 1. Fewest total capsules (Simplicity). 2. Closest match (Accuracy).
+
+            const rangeMin = monthlyTarget * 0.90;
+            const rangeMax = monthlyTarget * 1.10;
+
+            let bestOption = null;
+
+            // We search for combinations of x (25k) and y (5.6k)
+            const maxX = Math.ceil(rangeMax / CAP_HIGH);
+
+            let candidates = [];
+
+            for (let x = 0; x <= maxX; x++) {
+                const currentHigh = x * CAP_HIGH;
+                // Optimization: if high caps alone exceed max, stop (since y >= 0)
+                if (currentHigh > rangeMax) break;
+
+                // Calculate required Y range logic:
+                // Total = currentHigh + y*5600
+                // We need: rangeMin <= Total <= rangeMax
+                // rangeMin - currentHigh <= y*5600 <= rangeMax - currentHigh
+
+                let minReqY = (rangeMin - currentHigh) / CAP_LOW;
+                let maxReqY = (rangeMax - currentHigh) / CAP_LOW;
+
+                let startY = Math.ceil(minReqY);
+                if (startY < 0) startY = 0;
+                let endY = Math.floor(maxReqY);
+
+                for (let y = startY; y <= endY; y++) {
+                    let total = currentHigh + (y * CAP_LOW);
+                    // Double check range (floating point safety)
+                    if (total >= rangeMin && total <= rangeMax) {
+                        candidates.push({
+                            x: x,
+                            y: y,
+                            total: total,
+                            diff: Math.abs(total - monthlyTarget),
+                            count: x + y
+                        });
+                    }
+                }
+            }
+
+            // If candidates found within 10%, pick the simplest (lowest count)
+            if (candidates.length > 0) {
+                // Sort by count (asc), then diff (asc)
+                candidates.sort((a, b) => {
+                    if (a.count !== b.count) return a.count - b.count;
+                    return a.diff - b.diff;
+                });
+                bestOption = candidates[0];
+            } else {
+                // Fallback: If no combo within 10% (e.g. very low doses), find absolute closest
+                let bestDiff = Infinity;
+
+                // Fallback loop (wider search)
+                const fallbackMaxX = Math.ceil(monthlyTarget / CAP_HIGH) + 1;
+                for (let x = 0; x <= fallbackMaxX; x++) {
+                    let remainder = monthlyTarget - (x * CAP_HIGH);
+                    let y = Math.max(0, Math.round(remainder / CAP_LOW));
+
+                    let total = (x * CAP_HIGH) + (y * CAP_LOW);
+                    let diff = Math.abs(total - monthlyTarget);
+
+                    if (diff < bestDiff) {
+                        bestDiff = diff;
+                        bestOption = { x: x, y: y, total: total, diff: diff, count: x + y };
+                    }
+                }
+            }
+
+            let bestX = bestOption.x;
+            let bestY = bestOption.y;
+            let bestTotal = bestOption.total;
+
+            let maintenanceRec = "";
+            let parts = [];
+            if (bestX > 0) parts.push(`${bestX} cápsula(s) de 25,000 UI`);
+            if (bestY > 0) parts.push(`${bestY} cápsula(s) de 5,600 UI`);
+
+            if (parts.length === 0) {
+                maintenanceRec = "Dosis mínima. Valorar 1 cápsula de 5,600 UI ocasional.";
+            } else {
+                maintenanceRec = "Tomar " + parts.join(" + ") + " repartidas en el mes";
+            }
+
+            // --- UI Updates ---
+            welcomeState.classList.add('hidden');
+            resultsContent.classList.remove('hidden');
+
+            // BMI & Status
+            document.getElementById('bmiValue').textContent = bmi.toFixed(1);
+            let bmiText = '', bmiColor = '';
+            if (bmi < 18.5) { bmiText = 'Bajo Peso'; bmiColor = 'bg-slate-100 text-slate-600'; }
+            else if (bmi < 25) { bmiText = 'Normal'; bmiColor = 'bg-green-100 text-green-700'; }
+            else if (bmi < 30) { bmiText = 'Sobrepeso'; bmiColor = 'bg-amber-100 text-amber-700'; }
+            else { bmiText = 'Obesidad'; bmiColor = 'bg-red-100 text-red-700'; }
+            const bmiBadge = document.getElementById('bmiBadge');
+            bmiBadge.textContent = bmiText;
+            bmiBadge.className = `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${bmiColor}`;
+
+            const statusEl = document.getElementById('statusValue');
+            statusEl.textContent = status;
+            statusEl.className = `text-2xl font-bold ${statusClass.split(' ')[0]}`;
+            document.getElementById('statusIndicator').className = `w-3 h-3 rounded-full ${indicatorClass}`;
+            document.getElementById('targetValue').textContent = `Meta (Grant 2025): >${target} ng/mL`;
+
+            // Doses Text
+            document.getElementById('loadingDoseText').textContent = loadingRec;
+            document.getElementById('loadingDoseVal').textContent = actualWeeklyDose.toLocaleString('es-ES') + ' UI';
+
+            document.getElementById('maintenanceDoseText').textContent = maintenanceRec;
+            document.getElementById('monthlyTotalVal').textContent = bestTotal.toLocaleString('es-ES') + (bestTotal !== monthlyTarget ? ` (Meta: ${monthlyTarget.toLocaleString('es-ES')})` : '');
+
+            // Notes
+            const notesList = document.getElementById('notesList');
+            const clinicalNotes = document.getElementById('clinicalNotes');
+            notesList.innerHTML = '';
+            let hasNotes = false;
+
+            function addNote(text) {
+                const li = document.createElement('li');
+                li.textContent = text;
+                notesList.appendChild(li);
+                hasNotes = true;
+            }
+
+            addNote('Protocolo actualizado según Grant 2025: Metas >40 ng/mL y dosis de mantenimiento incrementadas (4,000 UI base).');
+            if (isObese) addNote('Pacientes con Obesidad requieren dosis mayores (x1.5) para alcanzar niveles óptimos.');
+            if (isAnticonvulsants) addNote('Uso de anticonvulsivantes aumenta requerimientos (+1000 UI/día).');
+            if (calculatedWeekly > 50000) addNote('La dosis de carga calculada se limitó al máximo de seguridad (50,000 UI/sem).');
+            if (isOsteoMeno) addNote('Meta terapéutica prioritaria >50 ng/mL por riesgo óseo aumentado.');
+
+            if (hasNotes) clinicalNotes.classList.remove('hidden');
+            else clinicalNotes.classList.add('hidden');
+        }
+    </script>
+</body>
+
+</html>
